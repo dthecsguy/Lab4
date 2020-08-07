@@ -16,10 +16,15 @@
 # altered in between executions (unless preconditions are used).
 tests = [{'description': 'Testing functionality', 'steps': [ 
         {'inputs': [('PINA', 0x01)], 'iterations': 5},
-        {'inputs': [('PINA', 0x00)], 'iterations': 5, 'expected': [('PORTB', 0x02)]},
+        {'inputs': [('PINA', 0x00)], 'iterations': 5},
         {'inputs': [('PINA', 0x01)], 'iterations': 5}, 
         {'inputs': [('PINA', 0x00)], 'iterations': 5}],
-	'expected': [('PORTB', 0x01)]}]
+	'expected': [('PORTB', 0x01)]},
+	{'description': 'Halfway', 'steps': [
+	{'inputs': [('PINA', 0x01)], 'iterations': 5},
+        {'inputs': [('PINA', 0x00)], 'iterations': 5}],
+	'expected': [('PORTB', 0x02)]}
+	]
 
 # Optionally you can add a set of "watch" variables these need to be global or static and may need
 # to be scoped at the function level (for static variables) if there are naming conflicts. The 

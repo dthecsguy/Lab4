@@ -54,6 +54,8 @@ void tick(){
             leds = 0x01;
             break;
     }
+    
+    PORTB = leds;
 }
 
 int main(void) {

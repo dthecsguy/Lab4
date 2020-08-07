@@ -102,6 +102,10 @@ void tick(){
             outtie -= 1;
             break;
             
+        case RESET:
+            outtie = 0;
+            break;
+            
         default:
             break;
     }

@@ -14,16 +14,18 @@
 # An example set of tests is shown below. It is important to note that these tests are not "unit tests" in 
 # that they are not ran in isolation but in the order shown and the state of the device is not reset or 
 # altered in between executions (unless preconditions are used).
-tests = [{'description': 'Testing functionality', 'steps': [ 
+tests = [{'description': 'up one initially', 'steps': [ 
         {'inputs': [('PINA', 0x01)], 'iterations': 5},
-        {'inputs': [('PINA', 0x00)], 'iterations': 5},
-        {'inputs': [('PINA', 0x01)], 'iterations': 5}, 
         {'inputs': [('PINA', 0x00)], 'iterations': 5}],
-	'expected': [('PORTB', 0x01)]},
-	{'description': 'Halfway', 'steps': [
-	{'inputs': [('PINA', 0x01)], 'iterations': 5},
+	'expected': [('PORTC', 0x08)]},
+	{'description': 'down one initially', 'steps': [
+	{'inputs': [('PINA', 0x02)], 'iterations': 5},
         {'inputs': [('PINA', 0x00)], 'iterations': 5}],
-	'expected': [('PORTB', 0x02)]}
+	'expected': [('PORTC', 0x07)]},
+	{'description': 'both pressed', 'steps': [
+	{'inputs': [('PINA', 0x03)], 'iterations': 5},
+        {'inputs': [('PINA', 0x00)], 'iterations': 5}],
+	'expected': [('PORTC', 0x00)]}
 	]
 
 # Optionally you can add a set of "watch" variables these need to be global or static and may need

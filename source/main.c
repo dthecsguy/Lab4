@@ -75,7 +75,7 @@ void tick(){
             
             break;
             
-        case A0_RELEASE:
+        case A1_RELEASE:
            if ((inc_button == 0x01) && (dec_button == 0x02))
                 state = RESET;
            else

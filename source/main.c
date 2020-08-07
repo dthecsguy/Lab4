@@ -12,56 +12,107 @@
 #include "simAVRHeader.h"
 #endif
 
-#define button (PINA & 0x01)
+#define inc_button (PINA & 0x01)
+#define dec_button (PINA & 0x02)
 
-enum States {START, OFF_UNPRESSED, OFF_PRESSED, ON_UNPRESSED, ON_PRESSED} state;
-unsigned char leds = 0;
+enum States {START, WAIT, A0_PRESS, A0_RELEASE, A1_PRESS, A1_RELEASE, RESET, ADD, SUB} state;
+unsigned char outtie = 7;
 
 void tick(){
     switch(state){  //Transitions
         case START:
-        case OFF_UNPRESSED:
-            state = (button == 0x01) ? OFF_PRESSED : OFF_UNPRESSED;
+        case WAIT:
+            if ((inc_button == 0x01) && (dec_button == 0x02))
+                state = RESET;
+            
+            else if (!(inc_button == 0x01) && (dec_button == 0x02))
+                state = A1_PRESS;
+            
+            else if ((inc_button == 0x01) && !(dec_button == 0x02))
+                state = A0_PRESS;
+            
+            else if (!(inc_button == 0x01) && !(dec_button == 0x02))
+                state = WAIT;
             break;
             
-        case OFF_PRESSED:
-            state = (button == 0x01) ? OFF_PRESSED : ON_UNPRESSED;
+        case A0_PRESS:
+            if ((inc_button == 0x01) && (dec_button == 0x02))
+                state = RESET;
+            
+            else if (!(inc_button == 0x01) && (dec_button == 0x02))
+                state = A0_RELEASE;
+            
+            else if ((inc_button == 0x01) && !(dec_button == 0x02))
+                state = A0_PRESS;
+            
+            else if (!(inc_button == 0x01) && !(dec_button == 0x02))
+                state = A0_RELEASE;
             break;
             
-        case ON_UNPRESSED:
-            state = (button == 0x01) ? ON_PRESSED : ON_UNPRESSED;
+        case A0_RELEASE:
+           if ((inc_button == 0x01) && (dec_button == 0x02))
+                state = RESET;
+           else
+               state = (outtie < 9) ? ADD : WAIT;
+           break;
+            
+        case ADD:
+            state = WAIT;
             break;
             
-        case ON_PRESSED:
-            state = (button == 0x01) ? ON_PRESSED : OFF_UNPRESSED;
+        case A1_PRESS:
+            if ((inc_button == 0x01) && (dec_button == 0x02))
+                state = RESET;
+            
+            else if (!(inc_button == 0x01) && (dec_button == 0x02))
+                state = A1_PRESS;
+            
+            else if ((inc_button == 0x01) && !(dec_button == 0x02))
+                state = A1_RELEASE;
+            
+            else if (!(inc_button == 0x01) && !(dec_button == 0x02))
+                state = A1_RELEASE;
+            
             break;
+            
+        case A0_RELEASE:
+           if ((inc_button == 0x01) && (dec_button == 0x02))
+                state = RESET;
+           else
+               state = (outtie > 0) ? SUB : WAIT;
+            
+           break;
+            
+        case SUB:
+            state = WAIT;
+            break;
+            
+        case RESET:
+            state = WAIT;
+            break;
+            
     }
     
     switch(state){  //Actions
-            case OFF_UNPRESSED:
-            leds = 0x01;
+        case ADD:
+            outtie += 1;
             break;
             
-        case OFF_PRESSED:
-            leds = 0x02;
+        case SUB:
+            outtie -= 1;
             break;
             
-        case ON_UNPRESSED:
-            leds = 0x02;
-            break;
-            
-        case ON_PRESSED:
-            leds = 0x01;
+        default:
             break;
     }
     
-    PORTB = leds;
+    PORTC = outtie;
 }
 
 int main(void) {
     /* Insert DDR and PORT initializations */
     DDRA = 0x00;    PORTA = 0xFF;
-    DDRB = 0xFF;    PORTB = 0x00;
+    DDRC = 0xFF;    PORTC = 0x00;
     
     state = START;
 
